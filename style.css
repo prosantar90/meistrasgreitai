@@ -1,0 +1,116 @@
+/* 
+Theme Name: Hello Elementor Child
+Theme URI: https://github.com/elementor/hello-theme/
+Description: Hello Elementor Child is a child theme of Hello Elementor, created by Elementor team
+Author: Elementor Team
+Author URI: https://elementor.com/
+Template: hello-elementor
+Version: 1.0.1
+Text Domain: hello-elementor-child
+License: GNU General Public License v3 or later.
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Tags: flexible-header, custom-colors, custom-menu, custom-logo, editor-style, featured-images, rtl-language-support, threaded-comments, translation-ready
+*/
+
+/*
+    Add your custom styles here
+*/
+.woocommerce div.product form.cart .variations select {
+	background: transparent;
+	border: 1px solid #1e60aa;
+	color: #1e60aa;
+}
+
+.woocommerce div.product form.cart .variations td,
+.woocommerce div.product form.cart .variations th {
+	color: #0a386c;
+	font-size: 14px;
+}
+
+input[type="number"] {
+	appearance: textfield;
+	-moz-appearance: textfield !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* varient label */
+.label {
+	transform: translateX(-10px);
+	padding-top: 4px;
+}
+
+.design {
+	margin: 0 !important;
+	border: 1px solid #51acfb !important;
+	color: #1e60aa !important;
+	font-size: 20px;
+	padding: 0 10px !important;
+	transition: .3s;
+	background: #b6d8f5;
+}
+
+.plus.design {
+	margin-right: 5px !important;
+}
+
+.design:hover,
+.design:focus {
+	background: #51acfb;
+	color: #fff !important;
+}
+
+.elementor-widget-wc-add-to-cart .quantity .qty,
+.woocommerce div.product.elementor .quantity .qty {
+	display: inline-block;
+	padding: 0 !important;
+	border: none;
+	color: #51acfb;
+	min-width: 20px !important;
+	width:2rem;
+}
+.m_title{
+	display: none;
+}
+@media(max-width:676px){
+.m_title {
+	display: block;
+	color: var(--e-global-color-primary);
+	font-size: 11px;
+	font-weight: 800;
+	font-family: "Mulish", Sans-serif;
+/* 	white-space: nowrap; */
+	text-overflow: clip;
+	overflow: hidden;
+	width: 100px;
+	min-width: 100px;
+	max-width: 100px;
+	padding-top: 5px;
+}
+.variations tbody tr td {
+	width: 150px;
+	margin: 0;
+	padding: 0;
+}
+.variations tbody tr th {
+	text-align: right;
+}
+.woocommerce div.product form.cart .variations tbody tr td select {
+	padding: 9px 9px !important;
+	margin: 0 !important;
+	font-size: 14px;
+	font-weight: 500;
+}
+.quantity input {
+	width: 30px !important;
+}
+
+.design {
+	width: 2rem !important;
+	max-width: 2rem;
+}
+}
