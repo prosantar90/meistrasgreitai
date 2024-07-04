@@ -30,6 +30,8 @@ foreach ($php_files as $php_file) {
 }
 
 
+   $pages_list= array('employee','general-overview','key-news','latest-project','registration','assigned-projects','completed-works' );
+
 function greetings_code(){
 $current_time = current_time('mysql');
 $time_only = date('H:i:s', strtotime($current_time));
@@ -63,30 +65,15 @@ function checkInput($data){
     return $data;
 }
 
-//   function technodemo_manage_role(){
-// 	add_role( 'shop_manager', __( 'Shop Manager' ), array(
-// 		'read' => true, // Allows a user to read
-// 		'create_posts' => true, // Allows user to create new posts
-// 		// 'manage_sub_pages'=> true,
-// 		'edit_posts' => true, // Allows user to edit their own posts
-// 		'manage_categories' => true,
-// 		'edit_others_posts '=> true,
-// 		'manage_hr_options' => true,
-// 		) ); 
-
-// 	add_role('employee', __('Employee'), array(
-// 		'read' => true,
-// 	));
-// }
-// add_action('init', 'technodemo_manage_role');
-
-
 add_action('init','partner_register');
 function partner_register(){
-if (isset($_POST['register_partner'])) {
-    global $wpdb;
+// if (isset($_POST['register_partner'])) {
+    if (isset($_POST['action']) && $_POST['action'] === 'register_partner') {
+        
+        global $wpdb;
         $table_name = $wpdb->prefix . 'partners';
         // Sanitize and validate form data
+        $user_role = 'partners';
         $vardas = sanitize_text_field($_POST['vardas']);
         $pavarde = sanitize_text_field($_POST['pavarde']);
         $imones = sanitize_text_field($_POST['imones']);
@@ -102,6 +89,7 @@ if (isset($_POST['register_partner'])) {
         $jums = sanitize_textarea_field($_POST['jums']);
         $netimkami = sanitize_textarea_field($_POST['netimkami']);
         $papildoma = sanitize_textarea_field($_POST['papildoma']);
+        $password = '';
 
         // Handle file uploads
         $upload_dir = wp_upload_dir();
@@ -115,37 +103,45 @@ if (isset($_POST['register_partner'])) {
             $brezin_url = handle_file_upload($_FILES['brezin'], $upload_dir['path']);
         }
 
-        // Insert data into the custom table
-        $wpdb->insert(
-            $table_name,
-            [
-                'vardas' => $vardas,
-                'pavarde' => $pavarde,
-                'imones' => $imones,
-                'pvm' => $pvm,
-                'el' => $el,
-                'telifono' => $telifono,
-                'darbu' => $darbu,
-                'vietove' => $vietove,
-                'darbuoto' => $darbuoto,
-                'galimos' => $galimos,
-                'statybose' => $statybose,
-                'paslaug' => $paslaug,
-                'jums' => $jums,
-                'netimkami' => $netimkami,
-                'papildoma' => $papildoma,
-                'nuotrau' => $nuotrau_url,
-                'brezin' => $brezin_url
-            ]
-        );
-        // if (false === $result) {
-        //     error_log('Database insertion failed: ' . $wpdb->last_error);
-        // } else {
-        //     // Redirect or display a success message
-        //     wp_redirect(home_url('employee'));
-        //     exit;
-        // }
+        $user_id = wp_create_user($vardas,$password, $el);
 
+        $data = array(
+            'user_id' => $user_id,
+            'vardas' => $vardas,
+            'pavarde' => $pavarde,
+            'imones' => $imones,
+            'pvm' => $pvm,
+            'el' => $el,
+            'telifono' => $telifono,
+            'darbu' => $darbu,
+            'vietove' => $vietove,
+            'darbuoto' => $darbuoto,
+            'galimos' => $galimos,
+            'statybose' => $statybose,
+            'paslaug' => $paslaug,
+            'jums' => $jums,
+            'netimkami' => $netimkami,
+            'papildoma' => $papildoma,
+            'nuotrau' => $nuotrau_url,
+            'brezin' => $brezin_url
+        );
+
+        // Insert data into the custom table
+        if(! is_wp_error($user_id)){
+            update_user_meta($user_id,'first_name',$vardas );
+            update_user_meta($user_id,'last_name',$pavarde);
+            wp_update_user(array('ID' => $user_id, 'role' => $user_role));
+
+            $run= $wpdb->insert(
+                $table_name,
+                $data
+            );
+            if($run){
+                echo 'ok';
+                wp_die();
+            }
+            
+        }
 }
 }
 
