@@ -26,35 +26,36 @@ $(document).ready(function(){$(function(){"use strict";$(".pCard_add").click(fun
 $('.select2').select2();
 $('#partners').dataTable({
 	 responsive: true,
+	 bottomStart:'pageLength',
+	 
 });
-// $(document).on('click','#register_partner', function(e){
-// 	console.log('test');
+$(document).on('click','#register_partner', function(e){
+	console.log('test');
 
-// 	e.preventDefault();
-// 	// alert('hello');
-// 	 let formData = new FormData($('#part_frm')[0]);
-// 	 formData.append('action', 'register_partner');
-// 	$.ajax({
-// 		url:ajax_object.ajax_url,
-// 		method:'post',
-// 		data:formData,
-// 		// data:$('#emp_frm').serialize() + '&action=emp_register',
-// 		contentType: false,
-//         processData: false,
-// 		success:function(r){
-// 			console.log(r);
-// 			if(r == 'ok'){
-// 				// alert('Employee Inserted Successfully');
-// 				Swal.fire({
-// 					icon:'success',
-// 					title:'SucceFully Register Employee'
-// 				})
-// 			}else{
-// 				Swal.fire({
-// 					icon: 'error',
-//               		title: r
-// 				})
-// 			}
-// 		}
-// 	});
-// });
+	e.preventDefault();
+	// alert('hello');
+	 let formData = new FormData($('#part_frm')[0]);
+	 formData.append('action', 'register_partner');
+	$.ajax({
+		url:ajax_object.ajax_url,
+		method:'post',
+		data:formData,
+		contentType: false,
+        processData: false,
+		success:function(r){
+			console.log(r);
+			if(r == 'ok'){
+				// alert('Employee Inserted Successfully');
+				Swal.fire({
+					icon:'success',
+					title:'SucceFully Register Employee'
+				})
+			}else{
+				Swal.fire({
+					icon: 'error',
+              		title: r
+				})
+			}
+		}
+	});
+});
