@@ -1,6 +1,6 @@
 <?php
 function my_custom_employee_page_styles() {
-    $pages_list= array('employee','general-overview','key-news','latest-project','registration' );
+    global $pages_list;
     if (is_page($pages_list)) {
         echo '<style>
             .elementor.elementor-31.elementor-location-header {

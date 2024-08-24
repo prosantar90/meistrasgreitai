@@ -4,12 +4,19 @@ $user_ID = $current_user->ID;
 $userData= get_userdata( $user_ID );
 $firstName = get_user_meta( $user_ID, 'first_name', true);
 $lastName = get_user_meta( $user_ID, 'last_name', true);
+$avatar_size = 80; // Size of the avatar in pixels
+
+// Get the user's avatar
+$avatar = get_avatar($user_ID, $avatar_size);
 $user_roles = $userData->roles;
 ?>
 <div class="container-fluid g-0">
 	<div class="row">
 		<div class="col-lg-12 p-0 ">
 			<div class="header_iner d-flex justify-content-between align-items-center">
+				<div class="sidebar_icon d-lg-none">
+					<i class="ti-menu"></i>
+				</div>
 				<div class="line_icon open_miniSide d-none d-lg-block">
 					<h4 class="f_s_15 f_w_500 mb-0">Hello <?= $firstName;?> 👋🏻</h4>
 					<p>
@@ -21,11 +28,11 @@ $user_roles = $userData->roles;
 				</div>
 				<div class="header_right d-flex justify-content-between align-items-center">
 					<div class="header_notification_warp d-flex align-items-center">
+						<!-- <li>
+							<a class="CHATBOX_open nav-link-notify" href="#"> <img src="<?= get_stylesheet_directory_uri();?>/assets/img/icon/msg.svg" alt> </a>
+						</li> -->
 						<li>
-							<a class="CHATBOX_open nav-link-notify" href="#"> <img src="<?= get_template_directory_uri();?>/assets/img/icon/msg.svg" alt> </a>
-						</li>
-						<li>
-							<a class="bell_notification_clicker nav-link-notify" href="#"> <img src="<?= get_template_directory_uri();?>/assets/img/icon/bell.svg" alt>
+							<a class="bell_notification_clicker nav-link-notify" href="#"> <img src="<?= get_stylesheet_directory_uri();?>/assets/img/icon/bell.svg" alt>
 							</a>
 
 							<div class="Menu_NOtification_Wrap">
@@ -36,7 +43,7 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/2.png" alt></a>
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/2.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>Cool Marketing </h5></a>
@@ -46,7 +53,7 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/4.png" alt></a>
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/4.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>Awesome packages</h5></a>
@@ -56,7 +63,7 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/3.png" alt></a>
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/3.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>what a packages</h5></a>
@@ -66,7 +73,7 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/2.png" alt></a>
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/2.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>Cool Marketing </h5></a>
@@ -76,7 +83,8 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/4.png" alt></a>
+
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/4.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>Awesome packages</h5></a>
@@ -86,7 +94,7 @@ $user_roles = $userData->roles;
 
 									<div class="single_notify d-flex align-items-center">
 										<div class="notify_thumb">
-											<a href="#"><img src="<?= get_template_directory_uri();?>/assets/img/staf/3.png" alt></a>
+											<a href="#"><img src="<?= get_stylesheet_directory_uri();?>/assets/img/staf/3.png" alt></a>
 										</div>
 										<div class="notify_content">
 											<a href="#"><h5>what a packages</h5></a>
@@ -105,7 +113,7 @@ $user_roles = $userData->roles;
 					</div>
 					<div class="profile_info d-flex align-items-center">
 						<div class="profile_thumb mr_20">
-							<img src="<?= get_template_directory_uri();?>/assets/img/transfer/4.png" alt="#">
+							<?php echo $avatar; ?>
 						</div>
 						<div class="author_name">
 							<h4 class="f_s_15 f_w_500 mb-0"><?= $firstName .' '.$lastName;?></h4>

@@ -3,23 +3,23 @@
  * Perform automatic login.
  */
 function technodemo_after_theme_setup() {
-	if (isset($_POST['login'])) {
-		$username = sanitize_text_field($_POST['username']);
-		$password = $_POST['password'];
-		$remember = isset($_POST['rememberMe']) ? true : false;
-		$credentials = array(
-			'user_login'    => $username,
-			'user_password' => $password,
-			'remember'      => $remember,
-		);
-		$user = wp_signon($credentials, false);
-		if (is_wp_error($user)) {
-			return $user->get_error_message();
-		}else{
-			wp_redirect(home_url());
-			exit();
-		}
-	}
+	// if (isset($_POST['login'])) {
+	// 	$username = sanitize_text_field($_POST['username']);
+	// 	$password = $_POST['password'];
+	// 	$remember = isset($_POST['rememberMe']) ? true : false;
+	// 	$credentials = array(
+	// 		'user_login'    => $username,
+	// 		'user_password' => $password,
+	// 		'remember'      => $remember,
+	// 	);
+	// 	$user = wp_signon($credentials, false);
+	// 	if (is_wp_error($user)) {
+	// 		return $user->get_error_message();
+	// 	}else{
+	// 		wp_redirect(home_url());
+	// 		exit();
+	// 	}
+	// }
 
 /**
  * @package technodemo HR managemant system
@@ -28,10 +28,16 @@ function technodemo_after_theme_setup() {
 // Array of page titles and corresponding template names
 $pages = array(
     'Registration' => 'template-emp-registration.php', 
+    'Partnerių sąrašas'     => 'template-partner.php',
     'General Overview' => 'template-general-overview.php',
     'Key News'      => 'template-key-news.php',
-    'Latest Project' => 'template-latest-projects.php',
-    'Assigned Projects' => 'template-assigned-projects.php'
+    'Latest Projects' => 'template-latest-projects.php',
+    'Assigned Projects' => 'template-assigned-projects.php',
+    'Pending Works'     => 'pending-page.php',
+    'Signed Contracts'  => 'signed-contracts.php',
+    'Completed Works'   => 'completed-works.php',
+    'View Partner'      => 'view-partner.php',
+    'Contract Awaiting Approval' => 'awaiting-appproval.php',
 
 );
 
@@ -73,22 +79,22 @@ add_action( 'after_setup_theme', 'technodemo_after_theme_setup' );
 
 function tecthnodemo_custom_login_redirect($redirect_to, $request, $user) {
     // Is there a user to check?
-	return home_url( '/' );
-    // if (isset($user->roles) && is_array($user->roles)) {
-    //     // check for admins
-    //     if (in_array('employee', $user->roles)) {
-    //         //Redirect them to the default place
-    //         return home_url('/');
-    //     }else{
-    //         return $redirect_to;
-    //     }
+	// return home_url( '/' );
+    if (isset($user->roles) && is_array($user->roles)) {
+        // check for admins
+        if (in_array('partners', $user->roles)) {
+            //Redirect them to the default place
+            return home_url('/general-overview');
+        }else{
+            return $redirect_to;
+        }
 
 
-    // } else {
-    //     return $redirect_to;
-    // }
+    } else {
+        return $redirect_to;
+    }
 }
-// add_filter('login_redirect', 'tecthnodemo_custom_login_redirect', 10, 3);
+add_filter('login_redirect', 'tecthnodemo_custom_login_redirect', 10, 3);
 
 function technodemo_logout_redirect(){
 	wp_redirect( home_url('/login'));
@@ -102,4 +108,13 @@ function custom_login_url($login_url, $redirect, $force_reauth) {
 
     // Use the custom login URL instead of the default one
     return add_query_arg('redirect_to', $redirect, $custom_login_url);
+}
+
+function is_partners(){
+    $user = wp_get_current_user();
+        $roles = $user->roles;
+        if (in_array('partners', $user->roles)) {
+        //Redirect them to the default place
+        return 'partners';
+    }
 }

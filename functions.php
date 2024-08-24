@@ -30,6 +30,10 @@ foreach ($php_files as $php_file) {
 }
 
 
+$pages_list= array('partneriu-sarasas','general-overview','key-news','latest-projects','registration','assigned-projects','completed-works','pending-works',
+                'signed-contracts','view-partner','contract-awaiting-approval',
+);
+
 function greetings_code(){
 $current_time = current_time('mysql');
 $time_only = date('H:i:s', strtotime($current_time));
@@ -48,14 +52,7 @@ echo $greeting;
 // add_action('greetings','greetings_code');
 
 
-// function tech_get_userdata(){
-//     $user_ID = $current_user->ID;
-// 	$userData= get_userdata( $user_ID );
-// 	$firstName = get_user_meta( $user_ID, 'first_name', true);
-// 	$lastName = get_user_meta( $user_ID, 'last_name', true);
-// 	$user_roles = $userData->roles;
-// 	// $user_roles = get_user_meta($user_ID, 'wp_capabilities', true);
-// }
+
 function checkInput($data){
     $data = trim($data);
     $data = stripcslashes($data);
@@ -63,107 +60,104 @@ function checkInput($data){
     return $data;
 }
 
-//   function technodemo_manage_role(){
-// 	add_role( 'shop_manager', __( 'Shop Manager' ), array(
-// 		'read' => true, // Allows a user to read
-// 		'create_posts' => true, // Allows user to create new posts
-// 		// 'manage_sub_pages'=> true,
-// 		'edit_posts' => true, // Allows user to edit their own posts
-// 		'manage_categories' => true,
-// 		'edit_others_posts '=> true,
-// 		'manage_hr_options' => true,
-// 		) ); 
+function get_current_user_role() {
+    // Get the current user ID
+    $user_id = get_current_user_id();
 
-// 	add_role('employee', __('Employee'), array(
-// 		'read' => true,
-// 	));
-// }
-// add_action('init', 'technodemo_manage_role');
+    if ($user_id) {
+        // Get the user object
+        $user = get_userdata($user_id);
 
+        // Get the roles
+        $roles = $user->roles;
 
-add_action('init','partner_register');
-function partner_register(){
-if (isset($_POST['register_partner'])) {
-    global $wpdb;
-        $table_name = $wpdb->prefix . 'partners';
-        // Sanitize and validate form data
-        $vardas = sanitize_text_field($_POST['vardas']);
-        $pavarde = sanitize_text_field($_POST['pavarde']);
-        $imones = sanitize_text_field($_POST['imones']);
-        $pvm = sanitize_text_field($_POST['pvm']);
-        $el = sanitize_email($_POST['el']);
-        $telifono = sanitize_text_field($_POST['telifono']);
-        $darbu = sanitize_textarea_field($_POST['darbu']);
-        $vietove = sanitize_text_field($_POST['vietove']);
-        $darbuoto = sanitize_text_field($_POST['darbuoto']);
-        $galimos = sanitize_text_field($_POST['galimos']);
-        $statybose = sanitize_text_field($_POST['statybose']);
-        $paslaug = sanitize_textarea_field($_POST['paslaug']);
-        $jums = sanitize_textarea_field($_POST['jums']);
-        $netimkami = sanitize_textarea_field($_POST['netimkami']);
-        $papildoma = sanitize_textarea_field($_POST['papildoma']);
-
-        // Handle file uploads
-        $upload_dir = wp_upload_dir();
-        $nuotrau_url = '';
-        $brezin_url = '';
-
-        if (!empty($_FILES['nuotrau']['name'])) {
-            $nuotrau_url = handle_file_upload($_FILES['nuotrau'], $upload_dir['path']);
+        // Assuming the user has only one role, get the first one
+        if (!empty($roles)) {
+            return $roles[0];
+        } else {
+            return 'No roles assigned.';
         }
-        if (!empty($_FILES['brezin']['name'])) {
-            $brezin_url = handle_file_upload($_FILES['brezin'], $upload_dir['path']);
-        }
-
-        // Insert data into the custom table
-        $wpdb->insert(
-            $table_name,
-            [
-                'vardas' => $vardas,
-                'pavarde' => $pavarde,
-                'imones' => $imones,
-                'pvm' => $pvm,
-                'el' => $el,
-                'telifono' => $telifono,
-                'darbu' => $darbu,
-                'vietove' => $vietove,
-                'darbuoto' => $darbuoto,
-                'galimos' => $galimos,
-                'statybose' => $statybose,
-                'paslaug' => $paslaug,
-                'jums' => $jums,
-                'netimkami' => $netimkami,
-                'papildoma' => $papildoma,
-                'nuotrau' => $nuotrau_url,
-                'brezin' => $brezin_url
-            ]
-        );
-        // if (false === $result) {
-        //     error_log('Database insertion failed: ' . $wpdb->last_error);
-        // } else {
-        //     // Redirect or display a success message
-        //     wp_redirect(home_url('employee'));
-        //     exit;
-        // }
-
-}
-}
-
-function handle_file_upload($file, $upload_dir) {
-    $uploadedfile = $file;
-    $upload_overrides = ['test_form' => false];
-    $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
-
-    if ($movefile && !isset($movefile['error'])) {
-        return $movefile['url'];
     } else {
-        // Handle the error
-        return false;
+        return 'No user is logged in.';
     }
 }
+/**
+ * Get Order using order status
+ */
+function get_order_using_order_status($status){
+     global $wpdb;
+    // Prepare the SQL query
+    $query = $wpdb->prepare("
+        SELECT 
+            oa.*, 
+            p.*, 
+            u.*, 
+            posts.ID as order_id, 
+            posts.post_date as order_date, 
+            postmeta.meta_value as order_total, 
+            woocommerce_order_items.order_item_name as item_title
+        FROM 
+            {$wpdb->prefix}order_assignments as oa
+        LEFT JOIN 
+            {$wpdb->prefix}partners as p ON oa.partner_id = p.ID
+        LEFT JOIN 
+            {$wpdb->users} as u ON p.user_id = u.ID
+        LEFT JOIN 
+            {$wpdb->posts} as posts ON oa.order_id = posts.ID AND posts.post_type = 'shop_order'
+        LEFT JOIN 
+            {$wpdb->postmeta} as postmeta ON posts.ID = postmeta.post_id AND postmeta.meta_key = '_order_total'
+        LEFT JOIN 
+            {$wpdb->prefix}woocommerce_order_items as woocommerce_order_items ON oa.order_id = woocommerce_order_items.order_id
+        WHERE 
+            oa.status = %s
+    ", $status);
 
-function meis_errors(){
-    static $wp_error;
-    return isset($wp_error) ? $wp_error : ($wp_error =new WP_Error(null, null, null));
+    // Execute the query
+    $results = $wpdb->get_results($query);
 
+    // Fetch formatted billing full name for each order
+    foreach ($results as &$order) {
+        $wc_order = wc_get_order($order->order_id);
+        if ($wc_order) {
+            $order->billing_full_name = $wc_order->get_formatted_billing_full_name();
+        } else {
+            $order->billing_full_name = 'N/A';
+        }
+    }
+
+    return $results;
+}
+
+
+/**
+ * contacts Waiting for approval
+ */
+function waiting_for_approval($status) {
+    global $wpdb;
+    // Sanitize the status to prevent SQL injection
+    $status = sanitize_text_field($status);
+
+     $query = $wpdb->prepare(
+    "SELECT * FROM {$wpdb->prefix}order_assignments as oa 
+    LEFT JOIN {$wpdb->prefix}posts AS O ON oa.order_id = O.ID
+    LEFT JOIN  {$wpdb->prefix}woocommerce_order_items as woocommerce_order_items ON oa.order_id = woocommerce_order_items.order_id
+    WHERE O.post_type = 'shop_order' AND O.post_status = %s",
+    $status
+);
+
+
+    // Execute the query
+    $results = $wpdb->get_results($query);
+
+    // Fetch formatted billing full name for each order
+    foreach ($results as &$order) {
+        $wc_order = wc_get_order($order->ID);
+        if ($wc_order) {
+            $order->billing_full_name = $wc_order->get_formatted_billing_full_name();
+        } else {
+            $order->billing_full_name = 'N/A';
+        }
+    }
+
+    return $results;
 }
